@@ -1,5 +1,10 @@
+# 색펜 SaekPen
+※ Saek is the Korean word for color.
+
 네오빔에서 쓸 색연필
 
+![SaekPen](saekpen0.01.gif)
+```default
 saekpen
 ├── LICENSE
 ├── lua
@@ -11,6 +16,6 @@ saekpen
 └── Readme.md
 
 5 directories, 4 files
-vim.api.nvim_create_namespace({name})
-nvim_buf_set_extmark({buffer}, {ns_id}, {line}, {col}, {*opts})
+```
+
 
