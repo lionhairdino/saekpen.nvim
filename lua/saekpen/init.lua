@@ -10,31 +10,43 @@ M.keys = { "1", "2", "3", "4", "5", "6", "7", "8", "<CR>", "9" }
 M.namespace = -1
 M.pencolor = -1
 M.backupVisual = {}
+M.popup_buf = -1
 
-local color_table = {
-  { fg = '#FFFFFF', bg = '#cf494c', ctermfg = 15, ctermbg = 0 },
-  { fg = '#000000', bg = '#60b442', ctermfg = 15, ctermbg = 4 },
-  { fg = '#000000', bg = '#db9c11', ctermfg = 0,  ctermbg = 10 },
-  { fg = '#000000', bg = '#fce94f', ctermfg = 0,  ctermbg = 14 },
-  { fg = '#FFFFFF', bg = '#0575d8', ctermfg = 0,  ctermbg = 9 },
-  { fg = '#000000', bg = '#ad5ed2', ctermfg = 0,  ctermbg = 5 },
-  { fg = '#000000', bg = '#1db6bb', ctermfg = 0,  ctermbg = 11 },
-  { fg = '#000000', bg = '#bab7b6', ctermfg = 0,  ctermbg = 15 },
+M.config = {
+  color_table = {
+    { fg = '#FFFFFF', bg = '#cf494c', ctermfg = 15, ctermbg = 0 },
+    { fg = '#000000', bg = '#60b442', ctermfg = 15, ctermbg = 4 },
+    { fg = '#000000', bg = '#db9c11', ctermfg = 0,  ctermbg = 10 },
+    { fg = '#000000', bg = '#fce94f', ctermfg = 0,  ctermbg = 14 },
+    { fg = '#FFFFFF', bg = '#0575d8', ctermfg = 0,  ctermbg = 9 },
+    { fg = '#000000', bg = '#ad5ed2', ctermfg = 0,  ctermbg = 5 },
+    { fg = '#000000', bg = '#1db6bb', ctermfg = 0,  ctermbg = 11 },
+    { fg = '#000000', bg = '#bab7b6', ctermfg = 0,  ctermbg = 15 },
+  }
 }
 
 local prepareColor = function()
   local nid = vim.api.nvim_create_namespace('Saekpen-ANSI')
-  M.backupVisual = vim.api.nvim_get_hl(0, { name = 'Visual' }) -- 나중에 init으로 옮길 것
   vim.api.nvim_set_hl(nid, 'ANSI39', M.backupVisual)           -- 지우개
-  vim.api.nvim_set_hl(nid, 'ANSI40', { fg = color_table[1].fg, bg = color_table[1].bg })
-  vim.api.nvim_set_hl(nid, 'ANSI41', { fg = color_table[2].fg, bg = color_table[2].bg })
-  vim.api.nvim_set_hl(nid, 'ANSI42', { fg = color_table[3].fg, bg = color_table[3].bg })
-  vim.api.nvim_set_hl(nid, 'ANSI43', { fg = color_table[4].fg, bg = color_table[4].bg })
-  vim.api.nvim_set_hl(nid, 'ANSI44', { fg = color_table[5].fg, bg = color_table[5].bg })
-  vim.api.nvim_set_hl(nid, 'ANSI45', { fg = color_table[6].fg, bg = color_table[6].bg })
-  vim.api.nvim_set_hl(nid, 'ANSI46', { fg = color_table[7].fg, bg = color_table[7].bg })
-  vim.api.nvim_set_hl(nid, 'ANSI47', { fg = color_table[8].fg, bg = color_table[8].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI40', { fg = M.config.color_table[1].fg, bg = M.config.color_table[1].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI41', { fg = M.config.color_table[2].fg, bg = M.config.color_table[2].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI42', { fg = M.config.color_table[3].fg, bg = M.config.color_table[3].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI43', { fg = M.config.color_table[4].fg, bg = M.config.color_table[4].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI44', { fg = M.config.color_table[5].fg, bg = M.config.color_table[5].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI45', { fg = M.config.color_table[6].fg, bg = M.config.color_table[6].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI46', { fg = M.config.color_table[7].fg, bg = M.config.color_table[7].bg })
+  vim.api.nvim_set_hl(nid, 'ANSI47', { fg = M.config.color_table[8].fg, bg = M.config.color_table[8].bg })
   return nid
+end
+
+M.init = function()
+  M.backupVisual = vim.api.nvim_get_hl(0, { name = 'Visual' })
+  M.namespace = prepareColor()
+end
+
+-- Lazy 패키지 매니저가 자동으로 실행한다.
+M.setup = function(user_opts)
+  M.config = vim.tbl_deep_extend("force", M.config, user_opts or {})
 end
 
 -- 보조 유틸
@@ -82,11 +94,12 @@ local key_recover = function(mode, keys, backup)
   end
 end
 
-local function popup(text)
-  local width = 40
-  local bufnr = vim.api.nvim_create_buf(false, true)
+local function popup()
+  local buf = M.popup_buf
+  buf = vim.api.nvim_create_buf(false, true)
+  local width = 16
   local current_win = vim.api.nvim_get_current_win()
-  local win_id = vim.api.nvim_open_win(bufnr, true, {
+  local win_id = vim.api.nvim_open_win(buf, true, {
     relative = 'editor',
     width = width,
     height = 1,
@@ -97,9 +110,17 @@ local function popup(text)
     focusable = false,
   })
 
-  --vim.api.nvim_buf_set_option(bufnr, 'modifiable', true)
-  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { text })
-  vim.api.nvim_buf_set_option(bufnr, 'modifiable', false)
+  vim.api.nvim_win_set_hl_ns(win_id, M.namespace)
+  --vim.api.nvim_buf_set_option(buf, 'modifiable', true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "123456789 Sakpen" })
+  local hl
+  for i, _ in ipairs(color_table) do
+    hl = "ANSI" .. (39 + i)
+    vim.api.nvim_buf_set_extmark(buf, M.namespace, 0, i - 1,
+      { end_row = 0, end_col = i, virt_text = { { "" .. i, hl } }, virt_text_pos = 'overlay', })
+  end
+
+  vim.api.nvim_buf_set_option(buf, 'modifiable', false)
   vim.api.nvim_command('wincmd p') -- 직전 윈도우로 포커스 옮기기
   return win_id
 end
@@ -174,7 +195,7 @@ local paint = function(args)
   else
     hl = 'ANSI' .. c
     vim.api.nvim_buf_set_extmark(current_buf, M.namespace, sp[1] - 1, sp[2],
-      { end_row = ep[1] - 1, end_col = ep__, hl_eol = false, hl_group = hl, priority = 9999, hl_mode="blend"})
+      { end_row = ep[1] - 1, end_col = ep__, hl_eol = false, hl_group = hl, priority = 9999, hl_mode = "blend" })
     M.pencolor = -1
     --vim.api.nvim_set_hl(M.namespace,'Visual', M.backupVisual)
     -- nvim_set_hl 은 아예 대체하는 거고, :highlight는 있는 걸 업데이트할 수 있다고 한다.
@@ -192,6 +213,7 @@ M.clear = function()
   vim.api.nvim_buf_clear_namespace(current_buf, M.namespace, 0, -1)
 end
 
+
 M.toggle = function()
   if M.saekpen_mode then
     M.saekpen_mode = false
@@ -201,7 +223,6 @@ M.toggle = function()
     key_recover('n', M.keys, M.key_backup_n)
     key_recover('x', M.keys, M.key_backup_v)
   else
-    M.namespace = prepareColor()
     vim.api.nvim_set_hl_ns(M.namespace)
     M.saekpen_mode = true
     -- 키맵 백업
@@ -233,7 +254,7 @@ M.toggle = function()
     -- 굳이 없어도 되지만 오류를 막기 위해
 
     -- @todo 팝업창 설정에 따라 안보이게
-    M.popup_win_id = popup("Saekpen Mode")
+    M.popup_win_id = popup()
   end
 end
 
