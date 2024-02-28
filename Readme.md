@@ -51,7 +51,7 @@ Lazy 플러그인 매니저를 사용합니다.
 {
   'lionhairdino/saekpen.nvim',
   config = true,
-  cmd = 'SaekMode'
+  cmd = 'SaekpenMode'
 },
 ```
 사용자 색깔 지정
