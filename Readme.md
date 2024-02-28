@@ -49,7 +49,7 @@ Lazy 플러그인 매니저를 사용합니다.
 기본 설정 사용
 ```lua
 {
-  'lionhairdino/saekpen',
+  'lionhairdino/saekpen.nvim',
   config = true,
   cmd = 'SaekMode'
 },
@@ -57,7 +57,7 @@ Lazy 플러그인 매니저를 사용합니다.
 사용자 색깔 지정
 ```lua
   {
-    'lionhairdino/saekpen',
+    'lionhairdino/saekpen.nvim',
     config = function()
       require "saekpen".setup({
         color_table = {
@@ -87,5 +87,5 @@ Lazy 플러그인 매니저를 사용합니다.
 LSP서버가 붙은 상태에서, 멀티 라인에 색을 입힌 것들은, 커서가 올라가면 색이 해제됩니다.
  
 ### Vim.kr
-Lua를 처음 만지며, 처음으로 네오빔 플러그인을 개발하고 있어 어설픈 게 많습니다. 개발 중 막히는 것들은 대부분 Vim.kr에 계신 분들께 답을 얻고 있습니다. 빔, 네오빔에 관심 있는 분은 [Vim.kr](http://vim.kr/)을 방문해 보세요
+Lua를 처음 만지며, 처음으로 네오빔 플러그인을 개발하고 있어 어설픈 게 많습니다. 개발 중 막히는 것들은 대부분 Vim.kr에 계신 분들께 답을 얻고 있습니다. 빔, 네오빔에 관심 있는 분은 [Vim.kr](http://vim.kr/), [Vim.kr (한국 빔 사용자 그룹 Korean Vim User Group)](https://discord.gg/TwaYqgtQYf) 디스코드 서버를 방문해 보세요.
 
