@@ -1,16 +1,6 @@
 local M = {}
-M.saekpen_mode = false
--- 키맵 백업
-M.key_backup_n = {}
-M.key_backup_v = {}
 
--- saekpen이 사용하는 단축키, 0: 하일라이트 삭제
-M.keys = { "1", "2", "3", "4", "5", "6", "7", "8", "<CR>", "9" }
-
-M.namespace = -1
-M.pencolor = -1
-M.backupVisual = {}
-M.popup_buf = -1
+local H = require 'saekpen/history'
 
 M.config = {
   color_table = {
@@ -27,7 +17,7 @@ M.config = {
 
 local prepareColor = function()
   local nid = vim.api.nvim_create_namespace('Saekpen-ANSI')
-  vim.api.nvim_set_hl(nid, 'ANSI39', M.backupVisual)           -- 지우개
+  vim.api.nvim_set_hl(nid, 'ANSI39', M.backupVisual) -- 지우개
   vim.api.nvim_set_hl(nid, 'ANSI40', { fg = M.config.color_table[1].fg, bg = M.config.color_table[1].bg })
   vim.api.nvim_set_hl(nid, 'ANSI41', { fg = M.config.color_table[2].fg, bg = M.config.color_table[2].bg })
   vim.api.nvim_set_hl(nid, 'ANSI42', { fg = M.config.color_table[3].fg, bg = M.config.color_table[3].bg })
@@ -39,14 +29,26 @@ local prepareColor = function()
   return nid
 end
 
-M.init = function()
-  M.backupVisual = vim.api.nvim_get_hl(0, { name = 'Visual' })
-  M.namespace = prepareColor()
+function M.init()
+  --제일 먼저 호출, 사용자 정의값이 필요 없는 초기화 과정은 여기
+  M.saekpen_mode = false
+  -- 키맵 백업
+  M.key_backup_n = {}
+  M.key_backup_v = {}
+  -- saekpen이 사용하는 단축키, 0: 하일라이트 삭제
+  M.keys = { "1", "2", "3", "4", "5", "6", "7", "8", "<CR>", "9" }
+  M.namespace = -1
+  M.penColor = -1
+  M.backupVisual = {}
+  M.popup_buf = -1
+  M.history = H.init()
 end
 
--- Lazy 패키지 매니저가 자동으로 실행한다.
-M.setup = function(user_opts)
+-- init 다음에 호출. 사용자 정의값은 여기서 적용
+function M.setup(user_opts)
   M.config = vim.tbl_deep_extend("force", M.config, user_opts or {})
+  M.backupVisual = vim.api.nvim_get_hl(0, { name = 'Visual' })
+  M.namespace = prepareColor()
 end
 
 -- 보조 유틸
@@ -114,7 +116,7 @@ local function popup()
   --vim.api.nvim_buf_set_option(buf, 'modifiable', true)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "123456789 Sakpen" })
   local hl
-  for i, _ in ipairs(color_table) do
+  for i, _ in ipairs(M.config.color_table) do
     hl = "ANSI" .. (39 + i)
     vim.api.nvim_buf_set_extmark(buf, M.namespace, 0, i - 1,
       { end_row = 0, end_col = i, virt_text = { { "" .. i, hl } }, virt_text_pos = 'overlay', })
@@ -125,33 +127,39 @@ local function popup()
   return win_id
 end
 
-M.activePen = function(args)
-  --  vim.api.nvim_out_write(vim.inspect(args))
-  M.pencolor = tonumber(args[3])
-  local preMode = args[4] -- 0: normal, 1: visual
+function M.activePen(penColor, preMode)
+  --args[1],args[2]로 선택 range가 들어오지만 지금은 쓰지 않는다.
+  --vim.api.nvim_out_write(vim.inspect(args))
+  --M.penColor = tonumber(args[3])
+  --local preMode = args[4] -- 0: normal, 1: visual
+  M.penColor = penColor
+
   local colors
 
-  local coloridx = M.pencolor - 39
+  local coloridx = M.penColor - 39
   if coloridx == 0 then
     colors = M.backupVisual
   else
     colors = {
-      fg = color_table[coloridx].fg,
-      bg = color_table[coloridx].bg,
-      ctermfg = color_table[coloridx].ctermfg,
-      ctermbg = color_table[coloridx].ctermbg
+      fg = M.config.color_table[coloridx].fg,
+      bg = M.config.color_table[coloridx].bg,
+      ctermfg = M.config.color_table[coloridx].ctermfg,
+      ctermbg = M.config.color_table[coloridx].ctermbg
     }
   end
 
   if colors ~= nil then
     vim.api.nvim_set_hl(M.namespace, 'Visual', colors)
   end
-  vim.api.nvim_feedkeys('v', 'n', true)
-  if preMode == '1' then vim.api.nvim_input('gv') end
+  if preMode == 1 then
+    vim.api.nvim_input('gv')
+  else
+    vim.api.nvim_feedkeys('v', 'n', true)
+  end
 end
 
-local paint = function(args)
-  local c = M.pencolor
+function M.paint()
+  local c = M.penColor
   if c == -1 then return end
   local current_win = vim.api.nvim_get_current_win()
   local current_buf = vim.api.nvim_get_current_buf()
@@ -162,7 +170,6 @@ local paint = function(args)
   -- 비주얼 모드로 들어가서 선택 이동을 해도,
   -- 현재 위치가 아니라 비주얼 모드를 시작했던 위치를 돌려준다.
   --local curpos = vim.api.nvim_win_get_cursor(current_win)
-  --print(vim.inspect(curpos))
 
   --  extmark는 row를 0부터 시작. mark는 1부터
   --  f o o b a r      line contents
@@ -181,44 +188,69 @@ local paint = function(args)
   local hl = nil
   if (c == 39) then
     -- 현재 영역에 있는 모든 extmark를 찾아서 삭제한다.
-    -- @todo
     -- extmark는 {시작점과 {끝점}}을 가지고 있다.
     -- 기준은 시작점이다. 끝점은 부가적인 정보다.
-    -- 끝점이 현재 선택 영역에 포함되도 지워지지 않는다.
+    -- 끝점이 현재 선택 영역에 포함되어도 지워지지 않는다.
+    --
+    -- @todo
     -- 만일 지우고 싶다면, 끝점과 extmark id를 연결하는 별도
     -- 테이블을 만들어서 현재 영역에 포함되는지 순회해야 한다.
-    local emarks = vim.api.nvim_buf_get_extmarks(current_buf, M.namespace, { sp[1] - 1, sp[2] }, { ep[1] - 1, ep__ }, {})
-    print(vim.inspect(emarks))
+    local emarks = vim.api.nvim_buf_get_extmarks(current_buf, M.namespace, { sp[1] - 1, sp[2] }, { ep[1] - 1, ep__ },
+      { details = true })
     for _, em in ipairs(emarks) do
       vim.api.nvim_buf_del_extmark(current_buf, M.namespace, em[1])
+      local v = { -1, em[2], em[3], em[4].end_row, em[4].end_col, em[4].hl_group }
+      H.add(M.history, v)
     end
   else
     hl = 'ANSI' .. c
     vim.api.nvim_buf_set_extmark(current_buf, M.namespace, sp[1] - 1, sp[2],
       { end_row = ep[1] - 1, end_col = ep__, hl_eol = false, hl_group = hl, priority = 9999, hl_mode = "blend" })
-    M.pencolor = -1
+    H.add(M.history, { 1, sp[1] - 1, sp[2], ep[1] - 1, ep__, hl }) -- 첫 번째 1:추가 -1:삭제
+    M.penColor = -1
     --vim.api.nvim_set_hl(M.namespace,'Visual', M.backupVisual)
     -- nvim_set_hl 은 아예 대체하는 거고, :highlight는 있는 걸 업데이트할 수 있다고 한다.
-    vim.api.nvim_set_hl(M.namespace, 'Visual', M.backupVisual)
     vim.api.nvim_win_set_cursor(current_win, ep)
+    vim.api.nvim_set_hl(M.namespace, 'Visual', M.backupVisual)
+    --vim.api.nvim_feedkeys('v', 'n', true) -- Visual 모드 끝내는 v
+  end
+  H.reset_redo(M.history)
+end
+
+local function undo_redo(doit) -- doit: H.redo 혹은 H.undo
+  local current_win = vim.api.nvim_get_current_win()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local last = doit(M.history)
+  if last == nil then return end
+  if (last[1] == 1) then   -- 1 : 추가 -1: 삭제 
+    local emark = vim.api.nvim_buf_get_extmarks(current_buf, M.namespace, { last[2], last[3] }, { last[4], last[5] }, {})
+    vim.api.nvim_buf_del_extmark(current_buf, M.namespace, emark[1][1])
+    vim.api.nvim_win_set_cursor(current_win, { last[2] + 1, last[3] })
+  else
+    vim.api.nvim_buf_set_extmark(current_buf, M.namespace, last[2], last[3],
+      { end_row = last[4], end_col = last[5], hl_eol = false, hl_group = last[6], priority = 9999, hl_mode = "blend" })
+    vim.api.nvim_win_set_cursor(current_win, { last[4] + 1, last[5] })
   end
 end
 
-M.paint = function()
-  paint(M.pencolor)
+function M.undo()
+  undo_redo(H.undo)
 end
 
-M.clear = function()
+function M.redo()
+  undo_redo(H.redo)
+end
+
+function M.clear()
   local current_buf = vim.api.nvim_get_current_buf()
   vim.api.nvim_buf_clear_namespace(current_buf, M.namespace, 0, -1)
+  M.history = H.init()
 end
 
-
-M.toggle = function()
+function M.toggle()
   if M.saekpen_mode then
     M.saekpen_mode = false
-    local popup_id = M.popup_win_id
-    if popup_id ~= nil then vim.api.nvim_win_close(popup_id, true) end
+    if M.popup_win_id ~= nil then vim.api.nvim_win_close(M.popup_win_id, true) end
     -- 키맵 복원
     key_recover('n', M.keys, M.key_backup_n)
     key_recover('x', M.keys, M.key_backup_v)
@@ -229,28 +261,42 @@ M.toggle = function()
     M.key_backup_n = key_backup('n', M.keys)
     M.key_backup_v = key_backup('x', M.keys)
     -- 색펜 셋업 (<C-U>를 먼저 입력하면 range를 무효화할 수 있다.)
-    vim.api.nvim_buf_set_keymap(0, 'n', '1', ':ActivePen 40 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '2', ':ActivePen 41 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '3', ':ActivePen 42 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '4', ':ActivePen 43 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '5', ':ActivePen 44 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '6', ':ActivePen 45 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '7', ':ActivePen 46 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '8', ':ActivePen 47 0<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '9', ':ActivePen 39 0<CR>', { noremap = true, silent = true })
+    -- 무효화 시키면 nvim_buf_get_mark로도 얻을 수 없다.
+    local activePenCmd = ":lua require'saekpen'.activePen(%d,%d)<CR>"
+    vim.api.nvim_buf_set_keymap(0, 'n', '1', string.format(activePenCmd, 40, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '2', string.format(activePenCmd, 41, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '3', string.format(activePenCmd, 42, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '4', string.format(activePenCmd, 43, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '5', string.format(activePenCmd, 44, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '6', string.format(activePenCmd, 45, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '7', string.format(activePenCmd, 46, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '8', string.format(activePenCmd, 47, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '9', string.format(activePenCmd, 39, 0), { noremap = true, silent = true })
 
-    vim.api.nvim_buf_set_keymap(0, 'x', '1', ':ActivePen 40 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '2', ':ActivePen 41 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '3', ':ActivePen 42 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '4', ':ActivePen 43 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '5', ':ActivePen 44 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '6', ':ActivePen 45 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '7', ':ActivePen 46 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '8', ':ActivePen 47 1<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '9', ':ActivePen 39 1<CR>', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '1', string.format(activePenCmd, 40, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '2', string.format(activePenCmd, 41, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '3', string.format(activePenCmd, 42, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '4', string.format(activePenCmd, 43, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '5', string.format(activePenCmd, 44, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '6', string.format(activePenCmd, 45, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '7', string.format(activePenCmd, 46, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '8', string.format(activePenCmd, 47, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '9', string.format(activePenCmd, 39, 1), { noremap = true, silent = true })
 
-    vim.api.nvim_buf_set_keymap(0, 'x', '<CR>', ':SaekPaint<CR>', { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '<CR>', ':SaekPaint<CR>', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', '<CR>', ":lua require'saekpen'.paint()<CR>",
+      { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '<CR>', ":lua require'saekpen'.paint()<CR>",
+      { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', 'U', ":lua require'saekpen'.undo()<CR>",
+      { noremap = true, silent = true, desc = 'Saekpen UnDo' })
+    vim.api.nvim_buf_set_keymap(0, 'n', 'U', ":lua require'saekpen'.undo()<CR>",
+      { noremap = true, silent = true, desc = 'Saekpen UnDo' })
+    vim.api.nvim_buf_set_keymap(0, 'x', 'R', ":lua require'saekpen'.redo()<CR>",
+      { noremap = true, silent = true, desc = 'Saekpen ReDo' })
+    vim.api.nvim_buf_set_keymap(0, 'n', 'R', ":lua require'saekpen'.redo()<CR>",
+      { noremap = true, silent = true, desc = 'Saekpen ReDo' })
+
+
     -- 굳이 없어도 되지만 오류를 막기 위해
 
     -- @todo 팝업창 설정에 따라 안보이게

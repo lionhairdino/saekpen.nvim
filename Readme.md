@@ -3,60 +3,85 @@
 
 네오빔에서 쓸 색연필
 
-![SaekPen](saekpen0.01.gif)
+![SaekPen](saekpen.gif)
 ```default
 saekpen
 ├── LICENSE
 ├── lua
 │   └── saekpen
-│       ├── deps
-│       └── init.lua
+│       ├── history.lua
+│       ├── init.lua
+│       └── lib
+│           └── stack.lua
 ├── plugin
 │   └── saekpen.vim
-└── Readme.md
+├── Readme.md
+└── saekpen.gif
 
-5 directories, 4 files
+5 directories, 7 files
 ```
-
 ### 사용법
 **모드 진입 토글 명령어**
 ```default
-:SaekMode
+:SaekpenMode
 ```
 위 명령어로 색모드에 진입후\
 펜 색깔 선택 - `1`,`2`,`3`,`4`,`5`,`6`,`7`,`8`, 그리고 삭제 `9`\
 ※ `0`은 줄에서 첫 글자로 돌아가는 디폴트 액션을 쓰기 위해 사용하지 않습니다.
 
 비주얼 모드에서 텍스트를 선택 후 숫자키를 눌러 색깔을 정하고 `<Enter>`키로 색깔 확정\
-노멀 모드에서 숫자키로 바로 원하는 색깔의 비주얼 모드로 진입, 텍스트 선택 후 `<Enter>`키로 색깔 확정\
+노멀 모드에서 숫자키로 바로 원하는 색깔의 비주얼 모드로 진입, 텍스트 선택 후 `<Enter>`키로 색깔 확정
+
 기존 색깔을 입힌 부분을 감싼 후 `9`>`Enter` 색깔 삭제\
 ※ 끝 부분만 삭제 범위에 넣으면 삭제되지 않습니다. 시작 부분이 범위에 있어야 삭제됩니다.
+
+`U` Undo. `R` Redo.
 
 **버퍼를 닫으면, 편집한 색깔은 사라집니다**
 
 **초기화 명령어**
 ```default
-:SaekClear
+:SaekpenClear
 ```
-### 기본 설정
-```default
-color_table = {
-  { fg = '#FFFFFF', bg = '#cf494c', ctermfg = 15, ctermbg = 0 },
-  { fg = '#000000', bg = '#60b442', ctermfg = 15, ctermbg = 4 },
-  { fg = '#000000', bg = '#db9c11', ctermfg = 0,  ctermbg = 10 },
-  { fg = '#000000', bg = '#fce94f', ctermfg = 0,  ctermbg = 14 },
-  { fg = '#FFFFFF', bg = '#0575d8', ctermfg = 0,  ctermbg = 9 },
-  { fg = '#000000', bg = '#ad5ed2', ctermfg = 0,  ctermbg = 5 },
-  { fg = '#000000', bg = '#1db6bb', ctermfg = 0,  ctermbg = 11 },
-  { fg = '#000000', bg = '#bab7b6', ctermfg = 0,  ctermbg = 15 },
-}
+### 설치
+Lazy 플러그인 매니저를 사용합니다.
+
+기본 설정 사용
+```lua
+{
+  'lionhairdino/saekpen',
+  config = true,
+  cmd = 'SaekMode'
+},
 ```
+사용자 색깔 지정
+```lua
+  {
+    'lionhairdino/saekpen',
+    config = function()
+      require "saekpen".setup({
+        color_table = {
+          { fg = '#FFFFFF', bg = '#cf494c', ctermfg = 15, ctermbg = 0 },
+          { fg = '#000000', bg = '#60b442', ctermfg = 15, ctermbg = 4 },
+          { fg = '#000000', bg = '#db9c11', ctermfg = 0,  ctermbg = 10 },
+          { fg = '#000000', bg = '#fce94f', ctermfg = 0,  ctermbg = 14 },
+          { fg = '#FFFFFF', bg = '#0575d8', ctermfg = 0,  ctermbg = 9 },
+          { fg = '#000000', bg = '#ad5ed2', ctermfg = 0,  ctermbg = 5 },
+          { fg = '#000000', bg = '#1db6bb', ctermfg = 0,  ctermbg = 11 },
+          { fg = '#000000', bg = '#bab7b6', ctermfg = 0,  ctermbg = 15 },
+        }
+      })
+    end,
+    cmd = 'SaekpenMode'
+  },
+```
+설정 [norcalli/nvim-colorizer.lua](https://github.com/norcalli/nvim-colorizer.lua) 플러그인을 이용하면 색깔 지정에 도움이 됩니다.
 
 ### todo
-- 사용자가 변경 가능한 설정 드러내기
-- 색 편집 결과 저장
-- ANSI Escape Code로 뽑아내어 클립보드에 저장 (디스코드에 붙이는 용도)
-- 색깔 인디케이터
+[v] 사용자가 변경 가능한 설정 드러내기\
+[v] 색깔 인디케이터\
+[-] 색 편집 결과 저장\
+[-] ANSI Escape Code로 뽑아내어 클립보드에 저장 (디스코드에 붙이는 용도)
 
 ### 알려진 버그
 LSP서버가 붙은 상태에서, 멀티 라인에 색을 입힌 것들은, 커서가 올라가면 색이 해제됩니다.
