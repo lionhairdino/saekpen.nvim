@@ -357,3 +357,5 @@ function M.toggle()
 end
 
 return M
+
+-- /Saekpen;65,0,65,78,ANSI46;73,8,73,29,ANSI42;88,1,88,30,ANSI44;93,18,93,67,ANSI40

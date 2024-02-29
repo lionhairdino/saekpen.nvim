@@ -8,6 +8,7 @@ Colored pencil or highlighter to use in Neovim
 - When highlighting a document
 - Presenting with Neovim
 - Live coding presentations
+- When spies hide secret messages?!
 
 ![SaekPen](saekpen.gif)
 ```default
@@ -94,7 +95,7 @@ At least within the **last 5 lines** of your document, do the following
 :SaekpenOutput
 ```
 The above command outputs saekpen data in the form `/Saekpen;...` at the current cursor position.\
-Make appropriate comments that do not affect the current file contents. ex) `-- Saekpen;...`
+Make appropriate comments that do not affect the current file contents. ex) `-- /Saekpen;...`
 
 #### Load
 ```deault
