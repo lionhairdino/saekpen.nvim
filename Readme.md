@@ -1,5 +1,5 @@
 # SaekPen 색펜
-[한글](Readme_kr.md)\ [English](Readme.md)
+[한글](Readme_kr.md) \ [English](Readme.md)
 
 ※ Saek is the Korean word for color.
 
@@ -66,7 +66,7 @@ Toggle commands to enter saek(colored)pen mode.
 :SaekpenMode
 ```
 After entering the color mode with the above command, execute the following commands\
-Select pen color - `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, and delete `9`\
+Select pen color - `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, and delete `9`
 
 Note that `0` is not used to write the default action, which is to return to the first character on the line.
 
@@ -80,7 +80,7 @@ If you put only the end in the deletion range, it will not be deleted. The begin
 
 `U` Undo. `R` Redo.
 
-***Waring! If you close the buffer, the edited color will disappear***.
+***Warning! If you close the buffer, the edited color will disappear***.
 
 #### Initialization that can't be undone
 ```default
@@ -103,7 +103,7 @@ Make appropriate comments that do not affect the current file contents. ex) `-- 
 Find the saekpen data within the last **5 lines** and reflect it in the document.
 
 ### Todo
-[-] Save saekpen data to a file\.
+[-] Save saekpen data to a file\
 [-] Extract and save to clipboard with ANSI Escape Code (for pasting into a discord)
 
 ### Known Bug

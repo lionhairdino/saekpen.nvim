@@ -1,9 +1,9 @@
 # 색펜 SaekPen
-[한글](Readme_kr.md)\ [English](Readme.md)
+[한글](Readme_kr.md) \ [English](Readme.md)
 
 ※ Saek is the Korean word for color.
 
-네오빔에서 쓸 색연필\
+네오빔에서 쓸 색연필
 
 - 문서에 강조 표시를 할 때
 - 네오빔으로 프리젠테이션 할 때
