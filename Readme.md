@@ -1,7 +1,13 @@
-# 색펜 SaekPen
+# SaekPen 색펜
+[한글](Readme_kr.md)\ [English](Readme.md)
+
 ※ Saek is the Korean word for color.
 
-네오빔에서 쓸 색연필
+Colored pencil or highlighter to use in Neovim
+
+- When highlighting a document
+- Presenting with Neovim
+- Live coding presentations
 
 ![SaekPen](saekpen.gif)
 ```default
@@ -20,10 +26,10 @@ saekpen
 
 5 directories, 7 files
 ```
-### 설치
-Lazy 플러그인 매니저를 사용합니다.
+### Install
+Use the Lazy Plugin Manager.
 
-기본 설정 사용
+Using default settings.
 ```lua
 {
   'lionhairdino/saekpen.nvim',
@@ -31,7 +37,7 @@ Lazy 플러그인 매니저를 사용합니다.
   cmd = 'SaekpenMode'
 },
 ```
-사용자 색깔 지정
+Using custom settings.
 ```lua
   {
     'lionhairdino/saekpen.nvim',
@@ -52,56 +58,57 @@ Lazy 플러그인 매니저를 사용합니다.
     cmd = 'SaekpenMode'
   },
 ```
-설정 [norcalli/nvim-colorizer.lua](https://github.com/norcalli/nvim-colorizer.lua) 플러그인을 이용하면 색깔 지정에 도움이 됩니다.
+[norcalli/nvim-colorizer.lua](https://github.com/norcalli/nvim-colorizer.lua) plugins can help with coloring.
 
-### 편집 
-**모드 진입 토글 명령어**
+### Editing
+Toggle commands to enter saek(colored)pen mode.
 ```default
 :SaekpenMode
 ```
-위 명령어로 색모드에 진입후\
-펜 색깔 선택 - `1`,`2`,`3`,`4`,`5`,`6`,`7`,`8`, 그리고 삭제 `9`\
-※ `0`은 줄에서 첫 글자로 돌아가는 디폴트 액션을 쓰기 위해 사용하지 않습니다.
+After entering the color mode with the above command, execute the following commands\
+Select pen color - `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, and delete `9`\
 
-#### 선택 영역 색 설정
-- 비주얼 모드에서 텍스트를 선택 후 숫자키를 눌러 색깔을 정하고 `<Enter>`키로 색깔 확정
-- 노멀 모드에서 숫자키로 바로 원하는 색깔의 비주얼 모드로 진입, 텍스트 선택 후 `<Enter>`키로 색깔 확정
+Note that `0` is not used to write the default action, which is to return to the first character on the line.
 
-#### 색 지우기
-기존 색깔을 입힌 부분을 감싼 후 `9`>`Enter` 색깔 삭제\
-※ 끝 부분만 삭제 범위에 넣으면 삭제되지 않습니다. 시작 부분이 범위에 있어야 삭제됩니다.
+#### Set the selected area color
+- In visual mode, select text, press the number keys to set the color, and confirm the color with `<Enter>`.
+- In normal mode, press the number keys to enter the visual mode of the desired color, select the text, and press `<Enter>` to confirm the color.
+
+#### Remove color
+Wrap around the existing coloring and type `9` > `Enter`\
+If you put only the end in the deletion range, it will not be deleted. The beginning must be in the range to be deleted.
 
 `U` Undo. `R` Redo.
 
-***버퍼를 닫으면, 편집한 색깔은 사라집니다***
+***Waring! If you close the buffer, the edited color will disappear***.
 
-#### Undo가 안되는 초기화
+#### Initialization that can't be undone
 ```default
 :SaekpenClear
 ```
 
-### 저장 및 불러 오기
-#### 저장
-적어도 문서의 **마지막 5줄** 안에서 다음을 실행합니다. 
+### Save and Load
+#### Save
+At least within the **last 5 lines** of your document, do the following
 ```deaulr
 :SaekpenOutput
 ```
-위 명령은 현재 커서 위치에 `/Saekpen;...` 형태의 색펜 데이터를 출력합니다.\
-현재 파일 내용에 영향을 주지 않는 적절한 주석처리를 합니다. ex) `-- Saekpen;...`
+The above command outputs saekpen data in the form `/Saekpen;...` at the current cursor position.\
+Make appropriate comments that do not affect the current file contents. ex) `-- Saekpen;...`
 
-#### 불러 오기
+#### Load
 ```deault
 :SaekpenInput
 ```
-마지막 **5줄** 내에서 색펜 데이터를 찾아 문서에 반영합니다.
+Find the saekpen data within the last **5 lines** and reflect it in the document.
 
-### todo
-[-] 색 편집 결과를 파일로 저장\
-[-] ANSI Escape Code로 뽑아내어 클립보드에 저장 (디스코드에 붙이는 용도)
+### Todo
+[-] Save saekpen data to a file\.
+[-] Extract and save to clipboard with ANSI Escape Code (for pasting into a discord)
 
-### 알려진 버그
-LSP서버가 붙은 상태에서, 멀티 라인에 색을 입힌 것들은, 커서가 올라가면 색이 해제됩니다.
- 
+### Known Bug
+With LSP server attached, things that are colored on multi-line are uncolored when the cursor hovers over them.
+
 ### Vim.kr
-Lua를 처음 만지며, 처음으로 네오빔 플러그인을 개발하고 있어 어설픈 게 많습니다. 개발 중 막히는 것들은 대부분 Vim.kr에 계신 분들께 답을 얻고 있습니다. 빔, 네오빔에 관심 있는 분은 [Vim.kr](http://vim.kr/), [Vim.kr (한국 빔 사용자 그룹 Korean Vim User Group)](https://discord.gg/TwaYqgtQYf) 디스코드 서버를 방문해 보세요.
+I'm new to Lua, and I'm developing a Neovim plugin for the first time, so I'm a bit clumsy. I've been getting answers to most of my stumbling blocks from people on Vim.kr. If you're interested in Vim and Neovim, you can visit the [Vim.kr](http://vim.kr/) and [Vim.kr (Korean Vim User Group)](https://discord.gg/TwaYqgtQYf) discord servers.
 
