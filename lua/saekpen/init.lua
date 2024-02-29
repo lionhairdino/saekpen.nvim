@@ -222,7 +222,7 @@ local function undo_redo(doit) -- doit: H.redo 혹은 H.undo
   local current_buf = vim.api.nvim_get_current_buf()
   local last = doit(M.history)
   if last == nil then return end
-  if (last[1] == 1) then   -- 1 : 추가 -1: 삭제 
+  if (last[1] == 1) then -- 1 : 추가 -1: 삭제
     local emark = vim.api.nvim_buf_get_extmarks(current_buf, M.namespace, { last[2], last[3] }, { last[4], last[5] }, {})
     vim.api.nvim_buf_del_extmark(current_buf, M.namespace, emark[1][1])
     vim.api.nvim_win_set_cursor(current_win, { last[2] + 1, last[3] })
@@ -239,6 +239,58 @@ end
 
 function M.redo()
   undo_redo(H.redo)
+end
+
+local function get_all_extmark()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local all = vim.api.nvim_buf_get_extmarks(current_buf, M.namespace, 0, -1, { details = true })
+  local res = ""
+  for _, one in ipairs(all) do
+    local str = string.format(';%s,%s,%s,%s,%s', one[2], one[3], one[4].end_row, one[4].end_col, one[4].hl_group)
+    res = res .. str
+  end
+  return res
+end
+
+function M.output()
+  vim.api.nvim_put({ "/Saekpen" .. get_all_extmark() }, '', false, true)
+end
+
+local function read_extmarks_str(s, e)
+  local current_buf = vim.api.nvim_get_current_buf()
+  local lines = vim.api.nvim_buf_get_lines(current_buf, s, e, false)
+  for _, line in ipairs(lines) do
+    local matched = string.find(line, '/Saekpen;', 1, false)
+    if matched ~= nil then
+      return string.sub(line,matched+9, #line) -- /Saekpen 문자열 날리기
+    end
+  end
+  return nil
+end
+
+function M.input()
+  local current_win = vim.api.nvim_get_current_win()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local em_str = read_extmarks_str(-5, -1)
+  if em_str ~= nil then
+    for em in string.gmatch(em_str, "[^;]+") do
+      local props = {}
+      local i = 1
+      for p in string.gmatch(em, "[^,]+") do
+        props[i] = p
+        i = i + 1
+      end
+      if props ~= nil then
+        local e1 = tonumber(props[1])
+        local e2 = tonumber(props[2])
+        local e3 = tonumber(props[3])
+        local e4 = tonumber(props[4])
+        vim.api.nvim_buf_set_extmark(current_buf, M.namespace, e1, e2,
+          { end_row = e3, end_col = e4, hl_eol = false, hl_group = props[5], priority = 9999, hl_mode = "blend" })
+        vim.api.nvim_win_set_cursor(current_win, { e3 + 1, e4 }) -- 1,0 인덱스
+      end
+    end
+  end
 end
 
 function M.clear()
