@@ -103,9 +103,12 @@ Make appropriate comments that do not affect the current file contents. ex) `-- 
 ```
 Find the saekpen data within the last **5 lines** and reflect it in the document.
 
+#### Convert to ANSI Escape Code for Discord and copy to clipboard 
+When you're done editing the Saekpen, select the area you want to copy in visual mode and press the `Y`(Capital) key to copy it to the clipboard. You can then paste it in the Discord app.\
+Note - Discord provides ANSI backgrounds with slightly different colors than the standard ones, so it won't convert to a perfect match.
+
 ### Todo
 [-] Save saekpen data to a file\
-[v] Extract and save to clipboard with ANSI Escape Code (for pasting into a discord)
 
 ### Known Bug
 With LSP server attached, things that are colored on multi-line are uncolored when the cursor hovers over them.
