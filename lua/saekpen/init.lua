@@ -1,6 +1,7 @@
 local M = {}
 
 local H = require 'saekpen/history'
+local S = require 'saekpen/lib/stack'
 
 M.config = {
   color_table = {
@@ -36,7 +37,7 @@ function M.init()
   M.key_backup_n = {}
   M.key_backup_v = {}
   -- saekpen이 사용하는 단축키, 0: 하일라이트 삭제
-  M.keys = { "1", "2", "3", "4", "5", "6", "7", "8", "<CR>", "9" }
+  M.keys = { "1", "2", "3", "4", "5", "6", "7", "8", "<CR>", "9", "U", "R", "Y" }
   M.namespace = -1
   M.penColor = -1
   M.backupVisual = {}
@@ -262,7 +263,7 @@ local function read_extmarks_str(s, e)
   for _, line in ipairs(lines) do
     local matched = string.find(line, '/Saekpen;', 1, false)
     if matched ~= nil then
-      return string.sub(line,matched+9, #line) -- /Saekpen 문자열 날리기
+      return string.sub(line, matched + 9, #line) -- /Saekpen 문자열 날리기
     end
   end
   return nil
@@ -298,6 +299,93 @@ function M.clear()
   vim.api.nvim_buf_clear_namespace(current_buf, M.namespace, 0, -1)
   M.history = H.init()
 end
+
+function M.yank_discord()
+  local ansi_table = {
+    ANSI40 = '\x1b[1;31;49m',
+    ANSI41 = '\x1b[1;32;49m',
+    ANSI42 = '\x1b[1;33;49m',
+    ANSI43 = '\x1b[1;37;41m',
+    ANSI44 = '\x1b[1;34;49m',
+    ANSI45 = '\x1b[1;35;49m',
+    ANSI46 = '\x1b[1;36;49m',
+    ANSI47 = '\x1b[1;30;47m',
+  }
+
+  local current_buf = vim.api.nvim_get_current_buf()
+  local sp = vim.api.nvim_buf_get_mark(current_buf, '<')
+  local ep = vim.api.nvim_buf_get_mark(current_buf, '>')
+  -- 마지막 인자를 false로 주면, 범위를 벗어나는
+  -- 익덱스는 가까운 유효한 인덱스로 보정한다.
+
+  -- 현재 선택한 범위내에 있는 extmark를 가져온다.
+  local lastrow = vim.fn.getline(ep[1])
+  local lastch = lastrow:sub(ep[2] + 1, ep[2] + 1)
+  local ep_ = 0
+  local lastch_len = vim.fn.strdisplaywidth(lastch)
+  local lastrow_len = string.len(lastrow)
+  if lastch_len > 1 then ep_ = ep[2] + lastch_len - 1 else ep_ = ep[2] + 1 end
+  local ep__ = ep_ > lastrow_len and lastrow_len or ep_ -- 줄의 마지막 위치를 넘지 않게
+  local emarks = vim.api.nvim_buf_get_extmarks(
+    current_buf,
+    M.namespace,
+    { sp[1] - 1, sp[2] },
+    { ep[1] - 1, ep__ },
+    { details = true }
+  )
+  local em_point = {}
+  for _, em in ipairs(emarks) do
+    if em_point[em[2]] == nil then em_point[em[2]] = {} end
+    table.insert(em_point[em[2]], { em[3], em[4].hl_group, 1 }) -- 1:start 0:end
+    if em_point[em[4].end_row] == nil then em_point[em[4].end_row] = {} end
+    table.insert(em_point[em[4].end_row], { em[4].end_col, em[4].hl_group, 0 })
+  end
+  -- extmark는 시작이 0row 1col
+  -- 여러 줄에 걸쳐 있는 경우
+  -- 하이라이트가 오버랩 되어 있는 경우
+  -- ※ string 위치1이 첫글자
+  local lines = vim.api.nvim_buf_get_lines(current_buf, sp[1] - 1, ep[1], false)
+  local final = ""
+  for num, line in ipairs(lines) do
+    local row = sp[1] - 1 + num - 1
+    if em_point[row] ~= nil then -- 현재 줄과 관련된 extmark의 시작점이나 끝점이 있다면
+      table.sort(em_point[row],
+        function(xs, ys)
+          if xs[1] < ys[1] then
+            return true
+          elseif xs[1] == ys[1] then
+            return xs[3] < ys[3] -- 같은 지점에 포인트가 있다면, 끝 먼저 두고, 시작을 나중에 둔다.
+          else
+            return false
+          end
+        end)
+      local s = 0
+      local layer = S.new()
+      local res = ""
+      local ansi = ""
+      for _, d in ipairs(em_point[row]) do
+        local now_ansi = ansi_table[d[2]]
+        if d[3] == 1 then -- 하이라이트 시작
+          ansi = now_ansi
+          S.push(layer, ansi)
+        else              -- 하이라이트 끝
+          S.pop(layer)    -- 시작할 때 넣어놨던 걸 버린다.
+          ansi = S.pop(layer) or "\x1b[0;39;49m"
+        end
+        res = res .. string.sub(line, s, d[1]) .. ansi
+        s = d[1] + 1
+      end
+      res = res .. string.sub(line, s, -1)
+      final = final .. res .. '\n'
+    else
+      final = final .. line .. '\n'
+    end
+  end
+  vim.fn.setreg('+', "```ansi\n" .. final .. "```")
+  vim.notify("Text with ANSI Escape Code is copied.",vim.log.levels.INFO)
+end
+
+-- [1;] 얇은 [2;] Bold
 
 function M.toggle()
   if M.saekpen_mode then
@@ -347,6 +435,11 @@ function M.toggle()
       { noremap = true, silent = true, desc = 'Saekpen ReDo' })
     vim.api.nvim_buf_set_keymap(0, 'n', 'R', ":lua require'saekpen'.redo()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen ReDo' })
+    vim.api.nvim_buf_set_keymap(0, 'x', 'Y', ":lua require'saekpen'.yank_discord()<CR>",
+      { noremap = true, silent = true, desc = 'Saekpen Yank for Discord' })
+    vim.api.nvim_buf_set_keymap(0, 'n', 'Y', ":lua require'saekpen'.yank_discord()<CR>",
+      { noremap = true, silent = true, desc = 'Saekpen Yank for Discord' })
+
 
 
     -- 굳이 없어도 되지만 오류를 막기 위해
