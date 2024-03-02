@@ -105,7 +105,7 @@ Find the saekpen data within the last **5 lines** and reflect it in the document
 
 ### Todo
 [-] Save saekpen data to a file\
-[-] Extract and save to clipboard with ANSI Escape Code (for pasting into a discord)
+[v] Extract and save to clipboard with ANSI Escape Code (for pasting into a discord)
 
 ### Known Bug
 With LSP server attached, things that are colored on multi-line are uncolored when the cursor hovers over them.
