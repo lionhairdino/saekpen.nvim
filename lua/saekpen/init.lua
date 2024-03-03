@@ -381,8 +381,16 @@ function M.yank_discord()
       final = final .. line .. '\n'
     end
   end
-  vim.fn.setreg('+', "```ansi\n" .. final .. "```")
-  vim.notify("Text with ANSI Escape Code is copied.",vim.log.levels.INFO)
+  local add_tag =  "```ansi\n" .. final .. "```"
+  local add_tag_count = #add_tag
+  vim.fn.setreg('+', add_tag)
+  if add_tag_count > 2000 then
+    vim.notify("Text with ANSI Escape Code is copied. Warning! Exceeds 2000 characters.",vim.log.levels.INFO)
+  elseif add_tag_count > 4000 then
+    vim.notify("Text with ANSI Escape Code is copied. Warning! Exceeds 4000 characters.",vim.log.levels.INFO)
+  else
+    vim.notify("Text with ANSI Escape Code is copied.",vim.log.levels.INFO)
+  end
 end
 
 -- [1;] 얇은 [2;] Bold
