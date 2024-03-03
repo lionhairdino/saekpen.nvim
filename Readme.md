@@ -100,7 +100,8 @@ Note - Discord provides ANSI backgrounds with slightly different colors than the
 
 ### Todo
 [-] Save saekpen data to a file\
-[-] Wavy underline pen
+[-] Wavy underline pen\
+[-] Colorize search results at once
 
 ### Known Bug
 With LSP server attached, things that are colored on multi-line are uncolored when the cursor hovers over them.
@@ -109,4 +110,5 @@ With LSP server attached, things that are colored on multi-line are uncolored wh
 I'm new to Lua, and I'm developing a Neovim plugin for the first time, so I'm a bit clumsy. I've been getting answers to most of my stumbling blocks from people on Vim.kr. If you're interested in Vim and Neovim, you can visit the [Vim.kr](http://vim.kr/) and [Vim.kr (Korean Vim User Group)](https://discord.gg/TwaYqgtQYf) discord servers.
 
 @WieeRd contributed the idea of warning based on discord character limit.\
-@gwangyi contributed the idea of storing data as comments in documents.
+@gwangyi contributed the idea of storing data as comments in documents.\
+@SeungheonOh contributed the idea of colorizing search results at once.
