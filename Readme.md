@@ -94,6 +94,7 @@ Note - Discord provides ANSI backgrounds with slightly different colors than the
 
 ### Todo
 [-] Save saekpen data to a file\
+[-] Wavy underline pen
 
 ### Known Bug
 With LSP server attached, things that are colored on multi-line are uncolored when the cursor hovers over them.

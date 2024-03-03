@@ -319,6 +319,7 @@ function M.yank_discord()
   -- 익덱스는 가까운 유효한 인덱스로 보정한다.
 
   -- 현재 선택한 범위내에 있는 extmark를 가져온다.
+
   local lastrow = vim.fn.getline(ep[1])
   local lastch = lastrow:sub(ep[2] + 1, ep[2] + 1)
   local ep_ = 0
