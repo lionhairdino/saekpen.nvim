@@ -10,7 +10,7 @@ Colored pencil or highlighter to use in Neovim
 - Live coding presentations
 - When spies hide secret messages?!
 
-![SaekPen](https://private-user-images.githubusercontent.com/61452610/309536134-c6fc016a-9c00-46ef-b1ae-84214b819018.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDk0NTQ2NTIsIm5iZiI6MTcwOTQ1NDM1MiwicGF0aCI6Ii82MTQ1MjYxMC8zMDk1MzYxMzQtYzZmYzAxNmEtOWMwMC00NmVmLWIxYWUtODQyMTRiODE5MDE4LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAzMDMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMzAzVDA4MjU1MlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWVjZjMyMTZiNDVmMmI2YzllZTg5OWU0N2E0MDkwYWU4ZGY1NTU3ZTJmMmQ2MDFlYzU0NTlhOGE3ZmUwYzBjMDkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.5npaYuz-oOQUXzCL0vEBoExQLukTl_3_-974F33FmwE)
+![SaekPen](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/c6fc016a-9c00-46ef-b1ae-84214b819018)
 
 ### Install
 Use the Lazy Plugin Manager.
@@ -82,6 +82,8 @@ At least within the **last 5 lines** of your document, do the following
 The above command outputs saekpen data in the form `/Saekpen;...` at the current cursor position.\
 Make appropriate comments that do not affect the current file contents. ex) `-- /Saekpen;...`
 
+![Saekpen data](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/41d87219-3456-49d1-8679-32197fc9bba5)
+
 #### Load
 ```deault
 :SaekpenInput
@@ -91,6 +93,10 @@ Find the saekpen data within the last **5 lines** and reflect it in the document
 #### Convert to ANSI Escape Code for Discord and copy to clipboard 
 When you're done editing the Saekpen, select the area you want to copy in visual mode and press the `Y`(Capital) key to copy it to the clipboard. You can then paste it in the Discord app.\
 Note - Discord provides ANSI backgrounds with slightly different colors than the standard ones, so it won't convert to a perfect match.
+
+![8 pens](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/f5d53eeb-428b-4a28-8317-396f5be6fa70)
+
+![Paste to Discord](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/aedaa8fb-4642-4b17-86d0-c1cef67a7c1c)
 
 ### Todo
 [-] Save saekpen data to a file\
