@@ -10,23 +10,8 @@ Colored pencil or highlighter to use in Neovim
 - Live coding presentations
 - When spies hide secret messages?!
 
-![SaekPen](saekpen.gif)
-```default
-saekpen
-├── LICENSE
-├── lua
-│   └── saekpen
-│       ├── history.lua
-│       ├── init.lua
-│       └── lib
-│           └── stack.lua
-├── plugin
-│   └── saekpen.vim
-├── Readme.md
-└── saekpen.gif
+![SaekPen](https://private-user-images.githubusercontent.com/61452610/309513508-bdc80969-5ca7-4abb-bf1b-b296f5e283c8.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDk0Mjk3MjgsIm5iZiI6MTcwOTQyOTQyOCwicGF0aCI6Ii82MTQ1MjYxMC8zMDk1MTM1MDgtYmRjODA5NjktNWNhNy00YWJiLWJmMWItYjI5NmY1ZTI4M2M4LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAzMDMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMzAzVDAxMzAyOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTFmMDFkMzNiNTE2NTVlY2E3NTgzYjczYmMzYjcxZTFiMWRiODY1NmQ5NmI5NzgyMTg1OTYzMDkyYzJmOGQ3YWMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.9omnBkne7i2QhAIPSrcAEJXglYVdBYq_vBgpCwHD36I)
 
-5 directories, 7 files
-```
 ### Install
 Use the Lazy Plugin Manager.
 
