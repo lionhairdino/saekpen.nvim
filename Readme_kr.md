@@ -10,7 +10,7 @@
 - 라이브 코딩 발표를 할 때
 - 스파이들이 비밀 메시지를 숨겨 눟을 때?!
 
-![SaekPen](https://private-user-images.githubusercontent.com/61452610/309536134-c6fc016a-9c00-46ef-b1ae-84214b819018.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDk0NTQ2NTIsIm5iZiI6MTcwOTQ1NDM1MiwicGF0aCI6Ii82MTQ1MjYxMC8zMDk1MzYxMzQtYzZmYzAxNmEtOWMwMC00NmVmLWIxYWUtODQyMTRiODE5MDE4LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAzMDMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMzAzVDA4MjU1MlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWVjZjMyMTZiNDVmMmI2YzllZTg5OWU0N2E0MDkwYWU4ZGY1NTU3ZTJmMmQ2MDFlYzU0NTlhOGE3ZmUwYzBjMDkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.5npaYuz-oOQUXzCL0vEBoExQLukTl_3_-974F33FmwE)
+![SaekPen](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/c6fc016a-9c00-46ef-b1ae-84214b819018)
 
 ### 설치
 Lazy 플러그인 매니저를 사용합니다.
@@ -81,6 +81,8 @@ Lazy 플러그인 매니저를 사용합니다.
 위 명령은 현재 커서 위치에 `/Saekpen;...` 형태의 색펜 데이터를 출력합니다.\
 현재 파일 내용에 영향을 주지 않는 적절한 주석처리를 합니다. ex) `-- /Saekpen;...`
 
+![saekpen_data](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/41d87219-3456-49d1-8679-32197fc9bba5)
+
 #### 불러 오기
 ```deault
 :SaekpenInput
@@ -89,7 +91,11 @@ Lazy 플러그인 매니저를 사용합니다.
 
 #### 디스코드용 ANSI Escape Code로 변환해서 클립보드로 복사
 색펜 편집을 마친 후, 비주얼 모드에서 복사할 영역을 선택하고, `Y`(대문자)키를 누르면 클립보드로 복사됩니다. 그 후 디스코드 앱에서 붙여 넣기 하면 됩니다.\
-주의 - 디스코드에서 ANSI 배경을 표준적인 색과 약간은 다르게 제공하기 때문에 완전히 일치하는 색으로 변환되진 않습니다. 
+주의 - 디스코드에서 ANSI 배경을 표준적인 색과 약간은 다르게 제공하기 때문에 완전히 일치하는 색으로 변환되진 않습니다.
+
+![saekpen_8pen](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/f5d53eeb-428b-4a28-8317-396f5be6fa70)
+
+![saekpen_discord](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/aedaa8fb-4642-4b17-86d0-c1cef67a7c1c)
 
 ### todo
 [-] 색 편집 결과를 파일로 저장\
