@@ -36,7 +36,7 @@ function M.init()
   -- 키맵 백업
   M.key_backup_n = {}
   M.key_backup_v = {}
-  -- saekpen이 사용하는 단축키, 0: 하일라이트 삭제
+  -- saekpen이 사용하는 단축키
   M.keys = { "1", "2", "3", "4", "5", "6", "7", "8", "<CR>", "9", "U", "R", "Y" }
   M.namespace = -1
   M.penColor = -1
@@ -448,10 +448,7 @@ function M.toggle()
     vim.api.nvim_buf_set_keymap(0, 'n', 'Y', ":lua require'saekpen'.yank_discord()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen Yank for Discord' })
 
-
-
     -- 굳이 없어도 되지만 오류를 막기 위해
-
     -- @todo 팝업창 설정에 따라 안보이게
     M.popup_win_id = popup()
   end
@@ -460,3 +457,4 @@ end
 return M
 
 -- /Saekpen;65,0,65,78,ANSI46;73,8,73,29,ANSI42;88,1,88,30,ANSI44;93,18,93,67,ANSI40
+
