@@ -97,18 +97,26 @@ Find the saekpen data within the last **5 lines** and reflect it in the document
 If document has saekpen data and want to run it automatically, add the following to you `init.lua`.
 ```lua
 local config_group = vim.api.nvim_create_augroup('MyConfigGroup', {})
-
-vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
-  group = config_group,
-  callback = function()
-    local row, column = unpack(vim.api.nvim_buf_get_mark(0, '"'))
-    local buf_line_count = vim.api.nvim_buf_line_count(0)
-
-    if row >= 1 and row <= buf_line_count then
-      vim.api.nvim_win_set_cursor(0, { row, column })
+vim.api.nvim_create_autocmd(
+  { "BufEnter" },
+  {
+    group = config_group,
+    pattern = { "*" },
+    callback = function()
+      local current_buf = vim.api.nvim_get_current_buf()
+      local lines = vim.api.nvim_buf_get_lines(current_buf, -5, -1, false)
+      for _, line in ipairs(lines) do
+        local matched = string.find(line, '/Saekpen', 1, false)
+        if matched ~= nil then
+          vim.api.nvim_command('SaekpenMode')
+          vim.api.nvim_command('SaekpenInput')
+          vim.api.nvim_command('SaekpenMode')
+          break
+        end
+      end
     end
-  end,
-})
+  }
+)
 ```
 #### Convert to ANSI Escape Code for Discord and copy to clipboard 
 When you're done editing the Saekpen, select the area you want to copy in visual mode and press the `Y`(Capital) key to copy it to the clipboard. You can then paste it in the Discord app.\

@@ -95,19 +95,28 @@ Lazy 플러그인 매니저를 사용합니다.
 
 파일에 `/Saekpen` 데이터가 있을 때 자동으로 실행하려면, `init.lua`에 다음을 추가합니다.
 ```lua
-local config_group = vim.api.nvim_create_augroup('MyConfigGroup', {})
+local config_group = vim.api.nvim_create_augroup('MyConfigGroup', {}) 
 
-vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
-  group = config_group,
-  callback = function()
-    local row, column = unpack(vim.api.nvim_buf_get_mark(0, '"'))
-    local buf_line_count = vim.api.nvim_buf_line_count(0)
-
-    if row >= 1 and row <= buf_line_count then
-      vim.api.nvim_win_set_cursor(0, { row, column })
+vim.api.nvim_create_autocmd(
+  { "BufEnter" },
+  {
+    group = config_group,
+    pattern = { "*" },
+    callback = function()
+      local current_buf = vim.api.nvim_get_current_buf()
+      local lines = vim.api.nvim_buf_get_lines(current_buf, -5, -1, false)
+      for _, line in ipairs(lines) do
+        local matched = string.find(line, '/Saekpen', 1, false)
+        if matched ~= nil then
+          vim.api.nvim_command('SaekpenMode')
+          vim.api.nvim_command('SaekpenInput')
+          vim.api.nvim_command('SaekpenMode')
+          break
+        end
+      end
     end
-  end,
-})
+  }
+)
 ```
 #### 디스코드용 ANSI Escape Code로 변환해서 클립보드로 복사
 색펜 편집을 마친 후, 비주얼 모드에서 복사할 영역을 선택하고, `Y`(대문자)키를 누르면 클립보드로 복사됩니다. 그 후 디스코드 앱에서 붙여 넣기 하면 됩니다.\
