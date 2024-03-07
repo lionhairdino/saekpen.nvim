@@ -82,6 +82,10 @@ At least within the **last 5 lines** of your document, do the following
 The above command outputs saekpen data in the form `/Saekpen;...` at the current cursor position.\
 Make appropriate comments that do not affect the current file contents. ex) `-- /Saekpen;...`
 
+Alternatively, use the following command to find and overwrite the existing data `/Saekpen` within 5 lines at the end of the document, or print it on the last line.
+```default
+:SaekpenOutput last
+```
 ![Saekpen data](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/41d87219-3456-49d1-8679-32197fc9bba5)
 
 #### Load

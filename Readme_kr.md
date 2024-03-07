@@ -75,12 +75,16 @@ Lazy 플러그인 매니저를 사용합니다.
 ### 저장 및 불러 오기
 #### 저장
 적어도 문서의 **마지막 5줄** 안에서 다음을 실행합니다. 
-```deaulr
+```default
 :SaekpenOutput
 ```
 위 명령은 현재 커서 위치에 `/Saekpen;...` 형태의 색펜 데이터를 출력합니다.\
 현재 파일 내용에 영향을 주지 않는 적절한 주석처리를 합니다. ex) `-- /Saekpen;...`
 
+혹은 다음 명령으로 문서 마지막에 5줄 이내에서 기존 데이터 `/Saekpen`를 찾아 덮어 씌우거나, 마지막 줄에 출력합니다.
+```default
+:SaekpenOutput last
+```
 ![saekpen_data](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/41d87219-3456-49d1-8679-32197fc9bba5)
 
 #### 불러 오기

@@ -85,7 +85,8 @@ local key_recover = function(mode, keys, backup)
   -- 키 복원
   for _, one in ipairs(keys) do
     -- 기존 없는 매핑이면 무시한다는데, 오류가 난다.
-    vim.api.nvim_buf_del_keymap(0, mode, one)
+    -- 오류를 막기 위해 pcall
+    pcall(vim.api.nvim_buf_del_keymap, 0, mode, one)
   end
   for _, one in ipairs(backup) do
     vim.api.nvim_buf_set_keymap(0
@@ -253,20 +254,44 @@ local function get_all_extmark()
   return res
 end
 
-function M.output()
-  vim.api.nvim_put({ "/Saekpen" .. get_all_extmark() }, '', false, true)
-end
-
-local function read_extmarks_str(s, e)
+local function find_extmarks_str(s, e)
   local current_buf = vim.api.nvim_get_current_buf()
   local lines = vim.api.nvim_buf_get_lines(current_buf, s, e, false)
-  for _, line in ipairs(lines) do
-    local matched = string.find(line, '/Saekpen;', 1, false)
+  for line_number, line in ipairs(lines) do
+    local matched = string.find(line, '/Saekpen', 1, false)
     if matched ~= nil then
-      return string.sub(line, matched + 9, #line) -- /Saekpen 문자열 날리기
+      return line_number - 5, matched, line
     end
   end
-  return nil
+  return nil, nil, nil
+end
+
+
+local function read_extmarks_str(s, e)
+  local row, matched, line = find_extmarks_str(s, e)
+  if row ~= nil and line ~= nil and matched ~= nil then
+    local res = string.sub(line, matched + 9, #line)   -- /Saekpen 문자열 날리기
+    return res
+  else
+    return nil
+  end
+end
+
+function M.output(arg)
+  local current_buf = vim.api.nvim_get_current_buf()
+  local saekpen_data = "/Saekpen" .. get_all_extmark()
+  if arg == "last" then -- 기존 데이터가 있으면 바꿔치고, 없으면 마지막에 출력
+    local row, _, line = find_extmarks_str(-5, -1)
+    if line ~= nil then
+      local new = line:gsub("/Saekpen.*", saekpen_data)
+      vim.api.nvim_buf_set_lines(current_buf, row - 1, row, false, { new })
+    else
+      vim.api.nvim_buf_set_lines(current_buf, - 1, -1, false, { saekpen_data })
+    end
+    vim.notify("Saekpen data has been printed", vim.log.levels.info)
+  else
+    vim.api.nvim_put({ saekpen_data }, '', false, true)
+  end
 end
 
 function M.input()
@@ -286,9 +311,16 @@ function M.input()
         local e2 = tonumber(props[2])
         local e3 = tonumber(props[3])
         local e4 = tonumber(props[4])
-        vim.api.nvim_buf_set_extmark(current_buf, M.namespace, e1, e2,
+        -- false: 색 펜 데이터가 문서와 맞지 않다. Sync되지 않은 데이터다.
+        local validRange, _ = pcall(vim.api.nvim_buf_set_extmark, current_buf, M.namespace, e1, e2,
           { end_row = e3, end_col = e4, hl_eol = false, hl_group = props[5], priority = 9999, hl_mode = "blend" })
-        vim.api.nvim_win_set_cursor(current_win, { e3 + 1, e4 }) -- 1,0 인덱스
+        if validRange == false then
+          vim.notify("Range is invalid. It's possible that the document has changed after saving the SaekPen data",
+            vim.log.levels.info)
+        else
+          vim.api.nvim_win_set_cursor(current_win, { e3 + 1, e4 }) -- 1,0 인덱스
+          vim.notify("Saekpen data has been loaded", vim.log.levels.info)
+        end
       end
     end
   end
@@ -369,8 +401,8 @@ function M.yank_discord()
         if d[3] == 1 then -- 하이라이트 시작
           ansi = now_ansi
           S.push(layer, ansi)
-        else              -- 하이라이트 끝
-          S.pop(layer)    -- 시작할 때 넣어놨던 걸 버린다.
+        else           -- 하이라이트 끝
+          S.pop(layer) -- 시작할 때 넣어놨던 걸 버린다.
           ansi = S.pop(layer) or "\x1b[0;39;49m"
         end
         res = res .. string.sub(line, s, d[1]) .. ansi
@@ -382,15 +414,15 @@ function M.yank_discord()
       final = final .. line .. '\n'
     end
   end
-  local add_tag =  "```ansi\n" .. final .. "```"
+  local add_tag = "```ansi\n" .. final .. "```"
   local add_tag_count = #add_tag
   vim.fn.setreg('+', add_tag)
   if add_tag_count > 2000 then
-    vim.notify("Text with ANSI Escape Code is copied. Warning! Exceeds 2000 characters.",vim.log.levels.INFO)
+    vim.notify("Text with ANSI Escape Code is copied. Warning! Exceeds 2000 characters.", vim.log.levels.INFO)
   elseif add_tag_count > 4000 then
-    vim.notify("Text with ANSI Escape Code is copied. Warning! Exceeds 4000 characters.",vim.log.levels.INFO)
+    vim.notify("Text with ANSI Escape Code is copied. Warning! Exceeds 4000 characters.", vim.log.levels.INFO)
   else
-    vim.notify("Text with ANSI Escape Code is copied.",vim.log.levels.INFO)
+    vim.notify("Text with ANSI Escape Code is copied.", vim.log.levels.INFO)
   end
 end
 
@@ -456,6 +488,4 @@ function M.toggle()
 end
 
 return M
-
--- /Saekpen;65,0,65,78,ANSI46;73,8,73,29,ANSI42;88,1,88,30,ANSI44;93,18,93,67,ANSI40
-
+-- /Saekpen;476,4,476,7,ANSI46;478,4,478,7,ANSI45;480,4,480,7,ANSI42
