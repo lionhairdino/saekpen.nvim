@@ -8,6 +8,7 @@ Colored pencil or highlighter to use in Neovim
 - When highlighting a document
 - Presenting with Neovim
 - Live coding presentations
+- When you attach ANSI-colored highlighted code to a Discord
 - When spies hide secret messages?!
 
 ![SaekPen](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/c6fc016a-9c00-46ef-b1ae-84214b819018)

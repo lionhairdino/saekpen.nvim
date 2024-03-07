@@ -8,6 +8,7 @@
 - 문서에 강조 표시를 할 때
 - 네오빔으로 프리젠테이션 할 때
 - 라이브 코딩 발표를 할 때
+- 디스코드에 ANSI 색으로 강조한 코드를 붙일 때
 - 스파이들이 비밀 메시지를 숨겨 눟을 때?!
 
 ![SaekPen](https://github.com/lionhairdino/saekpen.nvim/assets/61452610/c6fc016a-9c00-46ef-b1ae-84214b819018)
