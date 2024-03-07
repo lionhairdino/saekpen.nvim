@@ -94,6 +94,22 @@ Alternatively, use the following command to find and overwrite the existing data
 ```
 Find the saekpen data within the last **5 lines** and reflect it in the document.
 
+If document has saekpen data and want to run it automatically, add the following to you `init.lua`.
+```lua
+local config_group = vim.api.nvim_create_augroup('MyConfigGroup', {})
+
+vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
+  group = config_group,
+  callback = function()
+    local row, column = unpack(vim.api.nvim_buf_get_mark(0, '"'))
+    local buf_line_count = vim.api.nvim_buf_line_count(0)
+
+    if row >= 1 and row <= buf_line_count then
+      vim.api.nvim_win_set_cursor(0, { row, column })
+    end
+  end,
+})
+```
 #### Convert to ANSI Escape Code for Discord and copy to clipboard 
 When you're done editing the Saekpen, select the area you want to copy in visual mode and press the `Y`(Capital) key to copy it to the clipboard. You can then paste it in the Discord app.\
 Note - Discord provides ANSI backgrounds with slightly different colors than the standard ones, so it won't convert to a perfect match.
