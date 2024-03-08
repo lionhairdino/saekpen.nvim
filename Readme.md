@@ -99,7 +99,7 @@ If document has saekpen data and want to run it automatically, add the following
 ```lua
 local config_group = vim.api.nvim_create_augroup('MyConfigGroup', {})
 vim.api.nvim_create_autocmd(
-  { "BufEnter" },
+  { "BufReadPost" },
   {
     group = config_group,
     pattern = { "*" },

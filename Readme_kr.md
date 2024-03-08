@@ -99,7 +99,7 @@ Lazy 플러그인 매니저를 사용합니다.
 local config_group = vim.api.nvim_create_augroup('MyConfigGroup', {}) 
 
 vim.api.nvim_create_autocmd(
-  { "BufEnter" },
+  { "BufReadPost" },
   {
     group = config_group,
     pattern = { "*" },

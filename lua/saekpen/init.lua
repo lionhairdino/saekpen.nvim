@@ -41,7 +41,8 @@ function M.init()
   M.namespace = -1
   M.penColor = -1
   M.backupVisual = {}
-  M.popup_buf = -1
+  --M.popup_buf = -1
+  M.popup_win_id = nil
   M.history = H.init()
 end
 
@@ -99,9 +100,9 @@ local key_recover = function(mode, keys, backup)
 end
 
 local function popup()
-  local buf = M.popup_buf
-  buf = vim.api.nvim_create_buf(false, true)
-  local width = 16
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
+  local width = 9
   local current_win = vim.api.nvim_get_current_win()
   local win_id = vim.api.nvim_open_win(buf, true, {
     relative = 'editor',
@@ -116,7 +117,7 @@ local function popup()
 
   vim.api.nvim_win_set_hl_ns(win_id, M.namespace)
   --vim.api.nvim_buf_set_option(buf, 'modifiable', true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "123456789 Sakpen" })
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "123456789" })
   local hl
   for i, _ in ipairs(M.config.color_table) do
     hl = "ANSI" .. (39 + i)
@@ -319,11 +320,11 @@ function M.input()
             vim.log.levels.info)
         else
           vim.api.nvim_win_set_cursor(current_win, { e3 + 1, e4 }) -- 1,0 인덱스
-          vim.notify("Saekpen data has been loaded", vim.log.levels.info)
-        end
-      end
-    end
-  end
+        end --if validRange
+      end --if props
+    end --for em
+    vim.notify("Saekpen data found", vim.log.levels.info)
+  end --if em_str
 end
 
 function M.clear()
@@ -431,7 +432,10 @@ end
 function M.toggle()
   if M.saekpen_mode then
     M.saekpen_mode = false
-    if M.popup_win_id ~= nil then vim.api.nvim_win_close(M.popup_win_id, true) end
+    if M.popup_win_id ~= nil then
+      vim.api.nvim_win_close(M.popup_win_id, true)
+      M.popup_win_id = nil
+    end
     -- 키맵 복원
     key_recover('n', M.keys, M.key_backup_n)
     key_recover('x', M.keys, M.key_backup_v)
@@ -480,12 +484,12 @@ function M.toggle()
       { noremap = true, silent = true, desc = 'Saekpen Yank for Discord' })
     vim.api.nvim_buf_set_keymap(0, 'n', 'Y', ":lua require'saekpen'.yank_discord()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen Yank for Discord' })
-
     -- 굳이 없어도 되지만 오류를 막기 위해
+
     -- @todo 팝업창 설정에 따라 안보이게
     M.popup_win_id = popup()
   end
 end
 
 return M
--- /Saekpen;476,4,476,7,ANSI46;478,4,478,7,ANSI45;480,4,480,7,ANSI42
+-- /Saekpen;473,4,473,7,ANSI44;476,4,476,7,ANSI46;476,4,476,7,ANSI46;476,4,476,7,ANSI46;478,4,478,7,ANSI45;478,4,478,7,ANSI45;478,4,478,7,ANSI45;480,4,480,7,ANSI42;480,4,480,7,ANSI42;480,4,480,7,ANSI42
