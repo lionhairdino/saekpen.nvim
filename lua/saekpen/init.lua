@@ -5,14 +5,21 @@ local S = require 'saekpen/lib/stack'
 
 M.config = {
   color_table = {
-    { fg = '#FFFFFF', bg = '#cf494c', ctermfg = 15, ctermbg = 0 },
-    { fg = '#000000', bg = '#60b442', ctermfg = 15, ctermbg = 4 },
-    { fg = '#000000', bg = '#db9c11', ctermfg = 0,  ctermbg = 10 },
-    { fg = '#000000', bg = '#fce94f', ctermfg = 0,  ctermbg = 14 },
-    { fg = '#FFFFFF', bg = '#0575d8', ctermfg = 0,  ctermbg = 9 },
-    { fg = '#000000', bg = '#ad5ed2', ctermfg = 0,  ctermbg = 5 },
-    { fg = '#000000', bg = '#1db6bb', ctermfg = 0,  ctermbg = 11 },
-    { fg = '#000000', bg = '#bab7b6', ctermfg = 0,  ctermbg = 15 },
+    { key = "1", fg = '#FFFFFF', bg = '#cf494c', ctermfg = 15, ctermbg = 0 },
+    { key = "2", fg = '#000000', bg = '#60b442', ctermfg = 15, ctermbg = 4 },
+    { key = "3", fg = '#000000', bg = '#db9c11', ctermfg = 0,  ctermbg = 10 },
+    { key = "4", fg = '#000000', bg = '#fce94f', ctermfg = 0,  ctermbg = 14 },
+    { key = "5", fg = '#FFFFFF', bg = '#0575d8', ctermfg = 0,  ctermbg = 9 },
+    { key = "6", fg = '#000000', bg = '#ad5ed2', ctermfg = 0,  ctermbg = 5 },
+    { key = "7", fg = '#000000', bg = '#1db6bb', ctermfg = 0,  ctermbg = 11 },
+    { key = "8", fg = '#000000', bg = '#bab7b6', ctermfg = 0,  ctermbg = 15 },
+  },
+  keys = {
+    delete       = "9",
+    yank_discord = "Y",
+    undo         = "U",
+    redo         = "R",
+    apply        = "<CR>",
   }
 }
 
@@ -37,7 +44,21 @@ function M.init()
   M.key_backup_n = {}
   M.key_backup_v = {}
   -- saekpen이 사용하는 단축키
-  M.keys = { "1", "2", "3", "4", "5", "6", "7", "8", "<CR>", "9", "U", "R", "Y" }
+  M.keys = {
+    M.config.color_table[1].key,
+    M.config.color_table[2].key,
+    M.config.color_table[3].key,
+    M.config.color_table[4].key,
+    M.config.color_table[5].key,
+    M.config.color_table[6].key,
+    M.config.color_table[7].key,
+    M.config.color_table[8].key,
+    M.config.keys.delete,
+    M.config.keys.yank_discord,
+    M.config.keys.undo,
+    M.config.keys.redo,
+    M.config.keys.apply,
+  }
   M.namespace = -1
   M.penColor = -1
   M.backupVisual = {}
@@ -448,41 +469,41 @@ function M.toggle()
     -- 색펜 셋업 (<C-U>를 먼저 입력하면 range를 무효화할 수 있다.)
     -- 무효화 시키면 nvim_buf_get_mark로도 얻을 수 없다.
     local activePenCmd = ":lua require'saekpen'.activePen(%d,%d)<CR>"
-    vim.api.nvim_buf_set_keymap(0, 'n', '1', string.format(activePenCmd, 40, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '2', string.format(activePenCmd, 41, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '3', string.format(activePenCmd, 42, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '4', string.format(activePenCmd, 43, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '5', string.format(activePenCmd, 44, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '6', string.format(activePenCmd, 45, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '7', string.format(activePenCmd, 46, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '8', string.format(activePenCmd, 47, 0), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '9', string.format(activePenCmd, 39, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[1].key, string.format(activePenCmd, 40, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[2].key, string.format(activePenCmd, 41, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[3].key, string.format(activePenCmd, 42, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[4].key, string.format(activePenCmd, 43, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[5].key, string.format(activePenCmd, 44, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[6].key, string.format(activePenCmd, 45, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[7].key, string.format(activePenCmd, 46, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.color_table[8].key, string.format(activePenCmd, 47, 0), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.keys.delete        , string.format(activePenCmd, 39, 0), { noremap = true, silent = true })
 
-    vim.api.nvim_buf_set_keymap(0, 'x', '1', string.format(activePenCmd, 40, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '2', string.format(activePenCmd, 41, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '3', string.format(activePenCmd, 42, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '4', string.format(activePenCmd, 43, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '5', string.format(activePenCmd, 44, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '6', string.format(activePenCmd, 45, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '7', string.format(activePenCmd, 46, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '8', string.format(activePenCmd, 47, 1), { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', '9', string.format(activePenCmd, 39, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[1].key, string.format(activePenCmd, 40, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[2].key, string.format(activePenCmd, 41, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[3].key, string.format(activePenCmd, 42, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[4].key, string.format(activePenCmd, 43, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[5].key, string.format(activePenCmd, 44, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[6].key, string.format(activePenCmd, 45, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[7].key, string.format(activePenCmd, 46, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.color_table[8].key, string.format(activePenCmd, 47, 1), { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.keys.delete        , string.format(activePenCmd, 39, 1), { noremap = true, silent = true })
 
-    vim.api.nvim_buf_set_keymap(0, 'x', '<CR>', ":lua require'saekpen'.paint()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.keys.apply, ":lua require'saekpen'.paint()<CR>",
       { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '<CR>', ":lua require'saekpen'.paint()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.keys.apply, ":lua require'saekpen'.paint()<CR>",
       { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(0, 'x', 'U', ":lua require'saekpen'.undo()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.keys.undo, ":lua require'saekpen'.undo()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen UnDo' })
-    vim.api.nvim_buf_set_keymap(0, 'n', 'U', ":lua require'saekpen'.undo()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.keys.undo, ":lua require'saekpen'.undo()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen UnDo' })
-    vim.api.nvim_buf_set_keymap(0, 'x', 'R', ":lua require'saekpen'.redo()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.keys.redo, ":lua require'saekpen'.redo()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen ReDo' })
-    vim.api.nvim_buf_set_keymap(0, 'n', 'R', ":lua require'saekpen'.redo()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.keys.redo, ":lua require'saekpen'.redo()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen ReDo' })
-    vim.api.nvim_buf_set_keymap(0, 'x', 'Y', ":lua require'saekpen'.yank_discord()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'x', M.config.keys.yank_discord, ":lua require'saekpen'.yank_discord()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen Yank for Discord' })
-    vim.api.nvim_buf_set_keymap(0, 'n', 'Y', ":lua require'saekpen'.yank_discord()<CR>",
+    vim.api.nvim_buf_set_keymap(0, 'n', M.config.keys.yank_discord, ":lua require'saekpen'.yank_discord()<CR>",
       { noremap = true, silent = true, desc = 'Saekpen Yank for Discord' })
     -- 굳이 없어도 되지만 오류를 막기 위해
 
@@ -492,4 +513,4 @@ function M.toggle()
 end
 
 return M
--- /Saekpen;473,4,473,7,ANSI44;476,4,476,7,ANSI46;476,4,476,7,ANSI46;476,4,476,7,ANSI46;478,4,478,7,ANSI45;478,4,478,7,ANSI45;478,4,478,7,ANSI45;480,4,480,7,ANSI42;480,4,480,7,ANSI42;480,4,480,7,ANSI42
+-- /Saekpen
